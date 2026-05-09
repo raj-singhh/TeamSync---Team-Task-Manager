@@ -1,0 +1,22 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-team",
+      "description": "Team collaborating in a modern office",
+      "imageUrl": "https://picsum.photos/seed/teamsync-hero/1200/800",
+      "imageHint": "team collaboration"
+    },
+    {
+      "id": "avatar-user-1",
+      "description": "User profile avatar",
+      "imageUrl": "https://picsum.photos/seed/user1/200/200",
+      "imageHint": "profile person"
+    },
+    {
+      "id": "project-thumb-1",
+      "description": "Project thumbnail abstract design",
+      "imageUrl": "https://picsum.photos/seed/project1/600/400",
+      "imageHint": "abstract design"
+    }
+  ]
+}
