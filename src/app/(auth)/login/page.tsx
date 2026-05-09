@@ -35,7 +35,7 @@ export default function LoginPage() {
             <Input id="password" type="password" required />
           </div>
           <Button className="w-full bg-primary hover:bg-primary/90" asChild>
-            <Link href="/">Sign In</Link>
+            <Link href="/dashboard">Sign In</Link>
           </Button>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4 text-center">
