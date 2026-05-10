@@ -1,8 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getSessionUser } from "@/lib/session"
 import { redirect } from "next/navigation"
+import { ProfileForm } from "./profile-form"
 
 export default async function SettingsPage() {
   const user = await getSessionUser()
@@ -23,19 +22,7 @@ export default async function SettingsPage() {
           <CardTitle>Profile</CardTitle>
           <CardDescription>Information from your TeamSync account.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" value={user.name} readOnly className="bg-muted/50" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={user.email} readOnly className="bg-muted/50" />
-          </div>
-          <p className="text-xs text-muted-foreground pt-2">
-            Profile editing can be added later; credentials are stored securely in the database.
-          </p>
-        </CardContent>
+        <ProfileForm user={user} />
       </Card>
     </div>
   )
