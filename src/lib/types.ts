@@ -29,7 +29,8 @@ export interface Task {
   title: string;
   description: string;
   status: TaskStatus;
-  assignedTo: string; // userId
+  /** Assignee user id, or empty string if unassigned */
+  assignedTo: string;
   dueDate: string;
   createdAt: string;
 }

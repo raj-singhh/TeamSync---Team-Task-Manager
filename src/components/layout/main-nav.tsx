@@ -1,10 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { LayoutDashboard, FolderKanban, Users, Settings, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { apiFetch } from "@/lib/api-client"
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -15,6 +16,17 @@ const navItems = [
 
 export function MainNav() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  async function signOut() {
+    try {
+      await apiFetch("/api/auth/logout", { method: "POST" })
+    } catch {
+      /* still navigate away */
+    }
+    router.push("/login")
+    router.refresh()
+  }
 
   return (
     <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r bg-card md:flex">
@@ -28,7 +40,8 @@ export function MainNav() {
       </div>
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
+          const isActive =
+            pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
           return (
             <Link
               key={item.name}
@@ -47,11 +60,14 @@ export function MainNav() {
         })}
       </nav>
       <div className="border-t p-4">
-        <Button variant="ghost" className="w-full justify-start text-muted-foreground" asChild>
-          <Link href="/login">
-            <LogOut className="mr-3 size-5" />
-            Sign Out
-          </Link>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-muted-foreground"
+          type="button"
+          onClick={() => void signOut()}
+        >
+          <LogOut className="mr-3 size-5" />
+          Sign Out
         </Button>
       </div>
     </aside>

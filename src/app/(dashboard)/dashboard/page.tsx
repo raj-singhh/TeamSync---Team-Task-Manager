@@ -1,27 +1,74 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { mockTasks, mockUsers, mockProjects } from "@/lib/mock-data"
+import { useCallback, useEffect, useState } from "react"
 import { TaskCard } from "@/components/tasks/task-card"
+import { TaskDetailDialog } from "@/components/tasks/task-detail-dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle2, ListTodo, Timer, AlertCircle } from "lucide-react"
+import { apiFetch } from "@/lib/api-client"
+import type { Task, User } from "@/lib/types"
+import { Skeleton } from "@/components/ui/skeleton"
+
+type DashboardPayload = {
+  user: User | null
+  stats: { todo: number; inProgress: number; done: number; overdue: number }
+  tasks: (Task & { projectTitle: string; assignee: User | null })[]
+}
 
 export default function DashboardPage() {
-  const currentUser = mockUsers[0] // Mock current user as Alex Rivera
-  const userTasks = mockTasks.filter(t => t.assignedTo === currentUser.id)
-  
-  const stats = {
-    todo: userTasks.filter(t => t.status === "To Do").length,
-    inProgress: userTasks.filter(t => t.status === "In Progress").length,
-    done: userTasks.filter(t => t.status === "Done").length,
-    overdue: userTasks.filter(t => t.status !== "Done" && new Date(t.dueDate) < new Date()).length
+  const [data, setData] = useState<DashboardPayload | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [viewTask, setViewTask] = useState<DashboardPayload["tasks"][number] | null>(null)
+
+  const load = useCallback(async () => {
+    setError(null)
+    try {
+      const res = await apiFetch<DashboardPayload>("/api/dashboard")
+      setData(res)
+    } catch {
+      setError("Could not load dashboard")
+    }
+  }, [])
+
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  if (error) {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-destructive">
+        {error}
+      </div>
+    )
   }
+
+  if (!data) {
+    return (
+      <div className="space-y-8">
+        <Skeleton className="h-10 w-64" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-28" />
+          ))}
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-48" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const { user, stats, tasks } = data
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-primary">Welcome back, {currentUser.name}</h1>
-        <p className="text-muted-foreground">Here's what's happening with your projects today.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-primary">
+          Welcome back{user ? `, ${user.name.split(" ")[0]}` : ""}
+        </h1>
+        <p className="text-muted-foreground">Here&apos;s what&apos;s happening with your projects today.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -69,24 +116,34 @@ export default function DashboardPage() {
 
       <div>
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          Your Recent Tasks
-          <span className="text-sm font-normal text-muted-foreground">({userTasks.length})</span>
+          Your tasks
+          <span className="text-sm font-normal text-muted-foreground">({tasks.length})</span>
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {userTasks.map(task => (
-            <TaskCard 
-              key={task.id} 
-              task={task} 
-              assignee={currentUser} 
+          {tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              assignee={task.assignee ?? undefined}
+              projectTitle={task.projectTitle}
+              onOpenDetails={() => setViewTask(task)}
             />
           ))}
-          {userTasks.length === 0 && (
+          {tasks.length === 0 && (
             <div className="col-span-full h-48 border-2 border-dashed rounded-xl flex items-center justify-center text-muted-foreground">
               No tasks assigned to you yet.
             </div>
           )}
         </div>
       </div>
+
+      <TaskDetailDialog
+        task={viewTask}
+        assignee={viewTask?.assignee ?? null}
+        projectTitle={viewTask?.projectTitle}
+        open={!!viewTask}
+        onOpenChange={(open) => !open && setViewTask(null)}
+      />
     </div>
   )
 }
