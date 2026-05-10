@@ -18,8 +18,8 @@
 /out/
 
 # sqlite
-prisma/dev.db
-prisma/dev.db-journal
+*.db
+*.db-journal
 
 # production
 /build
