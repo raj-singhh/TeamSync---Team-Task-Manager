@@ -1,40 +1,14 @@
-"use client"
-
-import { useCallback, useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { apiFetch } from "@/lib/api-client"
-import type { User } from "@/lib/types"
-import { Skeleton } from "@/components/ui/skeleton"
+import { getSessionUser } from "@/lib/session"
+import { redirect } from "next/navigation"
 
-export default function SettingsPage() {
-  const [user, setUser] = useState<User | null | undefined>(undefined)
-
-  const load = useCallback(async () => {
-    try {
-      const res = await apiFetch<{ user: User }>("/api/auth/me")
-      setUser(res.user)
-    } catch {
-      setUser(null)
-    }
-  }, [])
-
-  useEffect(() => {
-    void load()
-  }, [load])
-
-  if (user === undefined) {
-    return (
-      <div className="space-y-4 max-w-lg">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-40" />
-      </div>
-    )
-  }
+export default async function SettingsPage() {
+  const user = await getSessionUser()
 
   if (!user) {
-    return <p className="text-muted-foreground">Could not load your profile.</p>
+    redirect("/login")
   }
 
   return (
