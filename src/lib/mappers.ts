@@ -53,12 +53,12 @@ export function parseTaskStatusApi(status: string): DbTaskStatusValue | null {
   }
 }
 
-export function userToApi(u: Pick<PrismaUser, "id" | "name" | "email" | "avatarUrl">): User {
+export function userToApi(u: Pick<PrismaUser, "id" | "name" | "email" | "avatarUrl" | "image">): User {
   return {
     id: u.id,
     name: u.name,
     email: u.email,
-    avatarUrl: u.avatarUrl ?? undefined,
+    avatarUrl: u.image ?? u.avatarUrl ?? undefined,
   }
 }
 

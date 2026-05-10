@@ -1,11 +1,10 @@
-import { cookies } from "next/headers"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { COOKIE_NAME, verifySessionToken } from "@/lib/jwt"
 
 export async function getSessionUserId(): Promise<string | null> {
-  const token = (await cookies()).get(COOKIE_NAME)?.value
-  if (!token) return null
-  return verifySessionToken(token)
+  const session = await getServerSession(authOptions)
+  return session?.user?.id || null
 }
 
 export async function getSessionUser() {
@@ -13,6 +12,6 @@ export async function getSessionUser() {
   if (!id) return null
   return prisma.user.findUnique({
     where: { id },
-    select: { id: true, email: true, name: true, avatarUrl: true, createdAt: true },
+    select: { id: true, email: true, name: true, image: true, createdAt: true },
   })
 }

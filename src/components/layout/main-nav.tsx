@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { signOut as nextAuthSignOut } from "next-auth/react"
 import { LayoutDashboard, FolderKanban, Users, Settings, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -19,13 +20,7 @@ export function MainNav() {
   const router = useRouter()
 
   async function signOut() {
-    try {
-      await apiFetch("/api/auth/logout", { method: "POST" })
-    } catch {
-      /* still navigate away */
-    }
-    router.push("/login")
-    router.refresh()
+    await nextAuthSignOut({ callbackUrl: "/login" })
   }
 
   return (
