@@ -7,12 +7,13 @@ import { TaskEditDialog } from "@/components/tasks/task-edit-dialog"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Users, Layout, Search, Filter, MoreVertical, Pencil } from "lucide-react"
+import { Users, Layout, Search, Filter, MoreVertical, Pencil, Settings } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { AISuggestModal } from "@/components/tasks/ai-suggest-modal"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CreateTaskDialog } from "@/components/projects/create-task-dialog"
 import { InviteMemberDialog } from "@/components/projects/invite-member-dialog"
+import { ProjectEditDialog } from "@/components/projects/project-edit-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +71,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
   const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null)
   const [viewTask, setViewTask] = useState<TaskRow | null>(null)
   const [editTask, setEditTask] = useState<TaskRow | null>(null)
+  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -184,6 +186,9 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
         <div className="flex items-center gap-2 flex-wrap">
           {project.canAdmin && (
             <>
+              <Button variant="outline" size="icon" onClick={() => setIsEditProjectOpen(true)} title="Project Settings">
+                <Settings className="size-4" />
+              </Button>
               <AISuggestModal
                 projectId={id}
                 projectDescription={project.description}
@@ -197,6 +202,14 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                 members={project.members}
                 canAssign
                 onCreated={() => void load()}
+              />
+              <ProjectEditDialog
+                projectId={id}
+                initialTitle={project.title}
+                initialDescription={project.description}
+                open={isEditProjectOpen}
+                onOpenChange={setIsEditProjectOpen}
+                onSaved={() => void load()}
               />
             </>
           )}
