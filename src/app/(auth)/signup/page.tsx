@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FolderKanban } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { registerUser } from "./actions"
 
 export default function SignupPage() {
   const router = useRouter()
@@ -44,10 +45,6 @@ export default function SignupPage() {
       formData.append("email", email)
       formData.append("password", password)
 
-      // Use dynamic import or require for server action if needed, or just import it at the top
-      // Wait, we need to import registerUser at the top of the file.
-      // I'll do a separate replacement for the import.
-      const { registerUser } = await import("./actions")
       const res = await registerUser(formData)
 
       if (res.error) {
