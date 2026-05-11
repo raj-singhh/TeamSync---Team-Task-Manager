@@ -32,7 +32,6 @@ export default function LoginPage() {
         toast({ variant: "destructive", title: "Sign in failed", description: result.error })
       } else {
         router.push("/dashboard")
-        router.refresh()
       }
     } catch (err) {
       toast({ variant: "destructive", title: "Sign in failed", description: "An unexpected error occurred" })
