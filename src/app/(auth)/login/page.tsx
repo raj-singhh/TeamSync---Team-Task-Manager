@@ -23,19 +23,13 @@ export default function LoginPage() {
     const password = String(fd.get("password") ?? "")
     setPending(true)
     try {
-      const result = await signIn("credentials", {
+      await signIn("credentials", {
         email,
         password,
-        redirect: false,
+        callbackUrl: "/dashboard",
       })
-      if (result?.error) {
-        toast({ variant: "destructive", title: "Sign in failed", description: result.error })
-      } else {
-        router.push("/dashboard")
-      }
     } catch (err) {
       toast({ variant: "destructive", title: "Sign in failed", description: "An unexpected error occurred" })
-    } finally {
       setPending(false)
     }
   }
