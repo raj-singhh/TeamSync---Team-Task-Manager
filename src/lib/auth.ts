@@ -27,6 +27,14 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_ID as string || "",
       clientSecret: process.env.GITHUB_SECRET as string || "",
       allowDangerousEmailAccountLinking: true,
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name || profile.login || "GitHub User",
+          email: profile.email,
+          image: profile.avatar_url,
+        }
+      },
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string || "",
