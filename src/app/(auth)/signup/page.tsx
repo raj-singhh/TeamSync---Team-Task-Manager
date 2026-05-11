@@ -35,12 +35,45 @@ export default function SignupPage() {
     }
     setPending(true)
     
-    // For NextAuth signup with credentials, you usually need a separate signup API 
-    // to create the user, then you sign them in. Since we deleted the custom /api/auth/register,
-    // we need to recreate a simple API route for signup if we want to support credentials signup.
-    // However, since NextAuth handles OAuth seamlessly, we'll keep the UI for credentials here.
-    toast({ variant: "destructive", title: "Credentials signup needs API configuration", description: "Use Google or GitHub for now." })
-    setPending(false)
+    setPending(true)
+    
+    try {
+      // Create a new FormData with just the fields we need
+      const formData = new FormData()
+      formData.append("name", name)
+      formData.append("email", email)
+      formData.append("password", password)
+
+      // Use dynamic import or require for server action if needed, or just import it at the top
+      // Wait, we need to import registerUser at the top of the file.
+      // I'll do a separate replacement for the import.
+      const { registerUser } = await import("./actions")
+      const res = await registerUser(formData)
+
+      if (res.error) {
+        toast({ variant: "destructive", title: "Signup failed", description: res.error })
+        setPending(false)
+        return
+      }
+
+      // Automatically sign in the user
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        toast({ variant: "destructive", title: "Login failed", description: result.error })
+      } else {
+        router.push("/dashboard")
+        router.refresh()
+      }
+    } catch (err) {
+      toast({ variant: "destructive", title: "Signup failed", description: "An unexpected error occurred" })
+    } finally {
+      setPending(false)
+    }
   }
 
   return (

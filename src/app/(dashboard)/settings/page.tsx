@@ -17,13 +17,7 @@ export default async function SettingsPage() {
         <p className="text-muted-foreground">Your account details.</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>Information from your TeamSync account.</CardDescription>
-        </CardHeader>
-        <ProfileForm user={user} />
-      </Card>
+      <ProfileForm user={user} />
     </div>
   )
 }
