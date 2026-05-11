@@ -64,8 +64,8 @@ export function ProjectEditDialog({
         body: JSON.stringify({ title, description }),
       })
       toast({ title: "Project updated" })
-      onSaved()
       onOpenChange(false)
+      setTimeout(() => onSaved(), 300)
     } catch (err) {
       toast({
         variant: "destructive",
@@ -82,10 +82,14 @@ export function ProjectEditDialog({
     try {
       await apiFetch(`/api/projects/${projectId}`, { method: "DELETE" })
       toast({ title: "Project deleted" })
-      onOpenChange(false)
       setShowDeleteAlert(false)
-      router.push("/projects")
-      router.refresh()
+      onOpenChange(false)
+      
+      // Delay navigation so Radix UI has time to cleanly remove pointer-events lock
+      setTimeout(() => {
+        router.push("/projects")
+        router.refresh()
+      }, 300)
     } catch (err) {
       toast({
         variant: "destructive",
@@ -124,7 +128,11 @@ export function ProjectEditDialog({
                 type="button"
                 variant="destructive"
                 disabled={pending}
-                onClick={() => setShowDeleteAlert(true)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  onOpenChange(false)
+                  setTimeout(() => setShowDeleteAlert(true), 200)
+                }}
               >
                 Delete Project
               </Button>
