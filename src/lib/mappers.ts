@@ -56,7 +56,7 @@ export function parseTaskStatusApi(status: string): DbTaskStatusValue | null {
 export function userToApi(u: Pick<PrismaUser, "id" | "name" | "email" | "avatarUrl" | "image">): User {
   return {
     id: u.id,
-    name: u.name,
+    name: u.name || "Anonymous User",
     email: u.email,
     avatarUrl: u.image ?? u.avatarUrl ?? undefined,
   }
