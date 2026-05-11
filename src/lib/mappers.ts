@@ -62,7 +62,7 @@ export function userToApi(u: Pick<PrismaUser, "id" | "name" | "email" | "avatarU
   }
 }
 
-export function taskToApi(t: PrismaTask): Task {
+export function taskToApi(t: PrismaTask & { _count?: { comments: number } }): Task {
   return {
     id: t.id,
     projectId: t.projectId,
@@ -72,5 +72,18 @@ export function taskToApi(t: PrismaTask): Task {
     assignedTo: t.assignedToId ?? "",
     dueDate: t.dueDate.toISOString().slice(0, 10),
     createdAt: t.createdAt.toISOString(),
+    commentCount: t._count?.comments || 0,
+  }
+}
+
+export function commentToApi(
+  c: { id: string; taskId: string; content: string; createdAt: Date; author: Pick<PrismaUser, "id" | "name" | "email" | "avatarUrl" | "image"> }
+): import("@/lib/types").Comment {
+  return {
+    id: c.id,
+    taskId: c.taskId,
+    content: c.content,
+    createdAt: c.createdAt.toISOString(),
+    author: userToApi(c.author),
   }
 }

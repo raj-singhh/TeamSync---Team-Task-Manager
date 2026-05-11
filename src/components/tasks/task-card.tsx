@@ -5,7 +5,7 @@ import { Task, User } from "@/lib/types"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Calendar, CheckCircle2, Circle, Timer } from "lucide-react"
+import { Calendar, CheckCircle2, Circle, Timer, MessageSquare } from "lucide-react"
 import { format, isPast } from "date-fns"
 import { cn, truncateToWords } from "@/lib/utils"
 
@@ -93,9 +93,17 @@ export function TaskCard({ task, assignee, projectTitle, actions, onOpenDetails 
         </CardContent>
       </div>
       <CardFooter className="mt-auto shrink-0 gap-2 border-t p-4 pt-3">
-        <div className="flex min-w-0 flex-1 items-center text-xs text-muted-foreground">
-          <Calendar className="mr-1 size-3 shrink-0" />
-          <span className="truncate">{format(new Date(task.dueDate), "MMM d")}</span>
+        <div className="flex min-w-0 flex-1 items-center gap-3 text-xs text-muted-foreground">
+          <div className="flex items-center">
+            <Calendar className="mr-1 size-3 shrink-0" />
+            <span className="truncate">{format(new Date(task.dueDate), "MMM d")}</span>
+          </div>
+          {(task.commentCount ?? 0) > 0 && (
+            <div className="flex items-center text-accent" title={`${task.commentCount} comments`}>
+              <MessageSquare className="mr-1 size-3 shrink-0" />
+              <span className="font-medium">{task.commentCount}</span>
+            </div>
+          )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
           {assignee && (

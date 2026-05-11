@@ -33,4 +33,13 @@ export interface Task {
   assignedTo: string;
   dueDate: string;
   createdAt: string;
+  commentCount?: number;
+}
+
+export interface Comment {
+  id: string;
+  taskId: string;
+  content: string;
+  createdAt: string;
+  author: User;
 }

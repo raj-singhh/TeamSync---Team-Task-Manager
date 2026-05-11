@@ -33,6 +33,9 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       },
       tasks: {
         orderBy: { createdAt: "desc" },
+        include: {
+          _count: { select: { comments: true } }
+        }
       },
     },
   })

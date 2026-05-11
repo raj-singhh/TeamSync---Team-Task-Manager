@@ -266,9 +266,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                           const assigneeUser =
                             task.assignee ??
                             project.members.find((m) => m.userId === task.assignedTo)?.user
-                          const canEdit =
-                            project.canAdmin ||
-                            (task.assignedTo !== "" && task.assignedTo === project.currentUserId)
+                          const isAssignee = task.assignedTo !== "" && task.assignedTo === project.currentUserId
 
                           return (
                             <TaskCard
@@ -277,7 +275,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                               assignee={assigneeUser}
                               onOpenDetails={() => setViewTask(task)}
                               actions={
-                                canEdit || project.canAdmin ? (
+                                isAssignee || project.canAdmin ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button variant="ghost" size="icon" className="size-8 shrink-0">
@@ -291,7 +289,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                                           {s}
                                         </DropdownMenuItem>
                                       ))}
-                                      {canEdit && (
+                                      {project.canAdmin && (
                                         <>
                                           <DropdownMenuSeparator />
                                           <DropdownMenuItem
@@ -419,6 +417,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
         }
         open={!!viewTask}
         onOpenChange={(open) => !open && setViewTask(null)}
+        onCommentAdded={() => void load()}
       />
 
       <TaskEditDialog
